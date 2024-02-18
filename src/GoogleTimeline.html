@@ -28,7 +28,7 @@
       var rows = data.map(item => {
         const start = item.Start ? new Date(item.Start) : null;
         const end = item.End ? new Date(item.End) : null;
-        console.log(item.App + ' - ' + item.Window, start, end); // Log the row data
+        //console.log(item.App + ' - ' + item.Window, start, end); // Log the row data
 
         if (start && end && !isNaN(start.getTime()) && !isNaN(end.getTime())) {
           return [item.App + ' - ' + item.Window, start, end];

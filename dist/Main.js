@@ -46,15 +46,15 @@ function CreateWindow() {
 electron_1.app.whenReady().then(async () => {
     (0, Database_1.SqliteCreate)('Processes');
     CreateWindow();
-    MainWindow.webContents.openDevTools();
-    setInterval(async () => {
-        await LogActiveWindow();
-    }, 1000);
     (0, Database_1.SqliteSelect)().then(data => {
         MainWindow.webContents.send('processData', data);
     }).catch(err => {
         console.error('Error fetching data:', err);
     });
+    //MainWindow.webContents.openDevTools();
+    setInterval(async () => {
+        await LogActiveWindow();
+    }, 1000);
     setInterval(async () => {
         (0, Database_1.SqliteSelect)().then(data => {
             console.log('Data to send to renderer:', JSON.stringify(data, null, 2)); // Detailed log

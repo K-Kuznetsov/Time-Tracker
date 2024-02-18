@@ -43,11 +43,24 @@ async function SqliteSelect() {
         MAX(duration) as MaxDuration,
         strftime('%Y-%m-%d %H:%M', Start) as MinuteBlock,
         strftime('%Y-%m-%d %H:%M:00', Start) as Start,
-        strftime('%Y-%m-%d %H:%M:59', Start) as End,
+        datetime(strftime('%Y-%m-%d %H:%M:00', Start), '+60 seconds') as End,
         App,
         Window
-    FROM (SELECT App, Window, Start, End, (strftime('%s', End) - strftime('%s', Start)) as duration FROM Processes)
-    GROUP BY MinuteBlock ORDER BY MinuteBlock ASC;`, (err, data) => {
+    FROM (
+        SELECT 
+            App,
+            Window,
+            Start,
+            End,
+            CASE 
+                WHEN strftime('%s', End) - strftime('%s', Start) > 59 THEN 60
+                ELSE (strftime('%s', End) - strftime('%s', Start))
+            END as duration
+        FROM Processes
+    )
+    GROUP BY MinuteBlock
+    ORDER BY MinuteBlock ASC;
+    `, (err, data) => {
             if (err) {
                 reject(err);
             } else {

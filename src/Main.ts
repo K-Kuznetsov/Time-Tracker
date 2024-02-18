@@ -43,17 +43,18 @@ function CreateWindow() {
 app.whenReady().then(async () => {
     SqliteCreate('Processes');
     CreateWindow();
-    MainWindow.webContents.openDevTools();
-
-    setInterval(async () => {
-        await LogActiveWindow();
-    }, 1000);
 
     SqliteSelect().then(data => {
         MainWindow.webContents.send('processData', data);
     }).catch(err => {
         console.error('Error fetching data:', err);
     });
+
+    //MainWindow.webContents.openDevTools();
+
+    setInterval(async () => {
+        await LogActiveWindow();
+    }, 1000);    
 
     setInterval(async () => {
         SqliteSelect().then(data => {

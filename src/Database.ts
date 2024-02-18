@@ -55,8 +55,7 @@ async function SqliteSelect() {
             (strftime('%s', End) - strftime('%s', Start)) as duration
         FROM Processes
     )
-    GROUP BY MinuteBlock
-    ORDER BY MinuteBlock ASC;`, (err, data) => {
+    GROUP BY MinuteBlock ORDER BY MinuteBlock ASC;`, (err, data) => {
             if (err) {
                 reject(err);
             } else {

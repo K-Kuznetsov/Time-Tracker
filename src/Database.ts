@@ -39,8 +39,7 @@ function SqliteUpdateEndTime(LastID: number, App: string, Window: string){
 
 async function SqliteSelect() {
     return new Promise((resolve, reject) => {
-        db.all(`SELECT 
-        MAX(duration) as MaxDuration,
+        db.all(`SELECT
         strftime('%Y-%m-%d %H:%M', Start) as MinuteBlock,
         strftime('%Y-%m-%d %H:%M:00', Start) as Start,
         datetime(strftime('%Y-%m-%d %H:%M:00', Start), '+60 seconds') as End,

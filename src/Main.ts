@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, WebPreferences } from 'electron';
 import { SqliteCreate, SqliteSelect, SqliteInsert, SqliteUpdateEndTime } from './Database';
 import activeWin from 'active-win';
 import FormatWindowName from './Formatting';
@@ -34,7 +34,7 @@ function CreateWindow() {
             nodeIntegration: false,
             preload: __dirname + '/Preload.js',
             contentSecurityPolicy: "default-src 'self'; script-src 'self';"
-        } as Electron.WebPreferences
+        } as WebPreferences
     });
     MainWindow.loadFile('./src/GoogleTimeline.html');
     return MainWindow;
@@ -63,7 +63,7 @@ app.whenReady().then(async () => {
         }).catch(err => {
             console.error('Error fetching data:', err);
         });
-    }, 5000);
+    }, 10000);
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) CreateWindow()

@@ -1,0 +1,49 @@
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Google Timeline</title>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+
+    google.charts.load('current', { 'packages': ['timeline'] });
+
+    window.electronAPI.receive('processData', (data) => {
+      drawChart(data);
+    });
+
+    function drawChart(data) {
+      var container = document.getElementById('timeline');
+      var chart = new google.visualization.Timeline(container);
+      var dataTable = new google.visualization.DataTable();
+
+      dataTable.addColumn({ type: 'string', id: 'Task' });
+      dataTable.addColumn({ type: 'date', id: 'Start' });
+      dataTable.addColumn({ type: 'date', id: 'End' });
+
+      if (Array.isArray(data[0])) {
+        data = data.flat();
+      };
+
+      var rows = data.map(item => {
+        const start = item.Start ? new Date(item.Start) : null;
+        const end = item.End ? new Date(item.End) : null;
+        console.log(item.App + ' - ' + item.Window, start, end); // Log the row data
+
+        if (start && end && !isNaN(start.getTime()) && !isNaN(end.getTime())) {
+          return [item.App + ' - ' + item.Window, start, end];
+        };
+        return null;
+      }).filter(row => row);
+
+      dataTable.addRows(rows.filter(row => row));
+      chart.draw(dataTable);
+    };
+  </script>
+</head>
+
+<body>
+  <div id="timeline" style="width: 100%; height: 720px;"></div>
+</body>
+
+</html>

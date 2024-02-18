@@ -55,10 +55,7 @@ async function SqliteSelect() {
             Window,
             Start,
             End,
-            CASE 
-                WHEN strftime('%s', End) - strftime('%s', Start) > 59 THEN 60
-                ELSE (strftime('%s', End) - strftime('%s', Start))
-            END as duration
+            strftime('%s', End) - strftime('%s', Start) as duration
         FROM Processes
     )
     GROUP BY MinuteBlock

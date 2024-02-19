@@ -37,6 +37,7 @@ function CreateWindow() {
         } as WebPreferences
     });
     MainWindow.loadFile('./src/GoogleTimeline.html');
+    MainWindow.maximize();
     return MainWindow;
 };
 

@@ -37,12 +37,12 @@ function SqliteUpdateEndTime(LastID: number, App: string, Window: string){
         db.run(`UPDATE Processes SET Duration = (strftime('%s', End) - strftime('%s', Start)) WHERE ID = ? or Duration IS NULL`, [LastID]);    
 };
 
-async function SqliteSelect() {
+async function SqliteSelect(Minutes:string) {
     return new Promise((resolve, reject) => {
         db.all(`WITH RECURSIVE MinuteSeries AS (
-            SELECT datetime('2024-02-19 16:00:00') AS TimePoint
+            SELECT MIN(strftime('%Y-%m-%d %H:%M:00', Start)) AS TimePoint FROM Processes
             UNION ALL
-            SELECT datetime(TimePoint, '+1 minute') FROM MinuteSeries
+            SELECT datetime(TimePoint, '+${Minutes} minute') FROM MinuteSeries
             WHERE TimePoint < (SELECT MAX(End) FROM Processes)
         )
         SELECT 
@@ -50,7 +50,7 @@ async function SqliteSelect() {
             p.App,
             p.Window,
             ms.TimePoint as Start,
-            datetime(ms.TimePoint, '+1 minute') as End
+            datetime(ms.TimePoint, '+${Minutes} minute') as End
         FROM 
             MinuteSeries ms
         JOIN 

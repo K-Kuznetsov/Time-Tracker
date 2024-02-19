@@ -39,24 +39,24 @@ function SqliteUpdateEndTime(LastID: number, App: string, Window: string){
 
 async function SqliteSelect() {
     return new Promise((resolve, reject) => {
-        db.all(`SELECT
-        strftime('%Y-%m-%d %H:%M', Start) as MinuteBlock,
-        strftime('%Y-%m-%d %H:%M:00', Start) as Start,
-        datetime(strftime('%Y-%m-%d %H:%M:00', Start), '+60 seconds') as End,
-        App,
-        Window
-    FROM (
+        db.all(`WITH RECURSIVE MinuteSeries AS (
+            SELECT datetime('2024-02-19 16:00:00') AS TimePoint
+            UNION ALL
+            SELECT datetime(TimePoint, '+1 minute') FROM MinuteSeries
+            WHERE TimePoint < (SELECT MAX(End) FROM Processes)
+        )
         SELECT 
-            App,
-            Window,
-            Start,
-            End,
-            strftime('%s', End) - strftime('%s', Start) as duration
-        FROM Processes
-    )
-    GROUP BY MinuteBlock
-    ORDER BY MinuteBlock ASC;
-    `, (err, data) => {
+            strftime('%Y-%m-%d %H:%M', ms.TimePoint) as MinuteBlock,
+            p.App,
+            p.Window,
+            ms.TimePoint as Start,
+            datetime(ms.TimePoint, '+1 minute') as End
+        FROM 
+            MinuteSeries ms
+        JOIN 
+            Processes p ON ms.TimePoint >= strftime('%Y-%m-%d %H:%M', p.Start) AND ms.TimePoint < strftime('%Y-%m-%d %H:%M', p.End)
+        ORDER BY 
+            MinuteBlock, p.App, p.Window;`, (err, data) => {
             if (err) {
                 reject(err);
             } else {

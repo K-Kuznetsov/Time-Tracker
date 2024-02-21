@@ -1,5 +1,3 @@
-// Function to format the window name to remove any special characters and unwanted text
-
 function FormatWindowName(WindowName: string) {
     const NewWindowName: string = WindowName.replace(/[^\x20-\x7E]/g, '')
         .replace(/ and \d+ more pages/g, '')

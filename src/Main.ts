@@ -51,8 +51,8 @@ app.whenReady().then(async () => {
     }, 1000);    
 
     setInterval(async () => {
-        SqliteSelect('1').then(data => {
-            console.log('Data to send to renderer:', JSON.stringify(data, null, 2)); // Detailed log
+        SqliteSelect('10').then(data => {
+            console.log('Data to send to renderer:', JSON.stringify(data, null, 2));
             MainWindow.webContents.send('processData', data);
         }).catch(err => {
             console.error('Error fetching data:', err);

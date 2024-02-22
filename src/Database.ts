@@ -32,12 +32,12 @@ function SqliteInsert(App: string, Window: string): Promise<number> {
     });
 };
 
-function SqliteUpdateEndTime(LastID: number, App: string, Window: string){
-        db.run(`UPDATE Processes SET End = datetime(CURRENT_TIMESTAMP, '+${TimezoneOffset} hours') WHERE ID = ? and App = ? and Window = ?`, [LastID, App, Window]);
-        db.run(`UPDATE Processes SET Duration = (strftime('%s', End) - strftime('%s', Start)) WHERE ID = ? or Duration IS NULL`, [LastID]);    
+function SqliteUpdateEndTime(LastID: number, App: string, Window: string) {
+    db.run(`UPDATE Processes SET End = datetime(CURRENT_TIMESTAMP, '+${TimezoneOffset} hours') WHERE ID = ? and App = ? and Window = ?`, [LastID, App, Window]);
+    db.run(`UPDATE Processes SET Duration = (strftime('%s', End) - strftime('%s', Start)) WHERE ID = ? or Duration IS NULL`, [LastID]);
 };
 
-async function SqliteSelect(Minutes:string) {
+async function SqliteSelect(Minutes: string) {
     return new Promise((resolve, reject) => {
         db.all(`WITH RECURSIVE MinuteSeries AS (
             SELECT MIN(strftime('%Y-%m-%d %H:%M:00', Start)) AS TimePoint FROM Processes
@@ -55,6 +55,8 @@ async function SqliteSelect(Minutes:string) {
             MinuteSeries ms
         JOIN 
             Processes p ON ms.TimePoint >= strftime('%Y-%m-%d %H:%M', p.Start) AND ms.TimePoint < strftime('%Y-%m-%d %H:%M', p.End)
+        WHERE
+            date(p.Start) = date('now') AND date(p.End) = date('now')
         ORDER BY 
             MinuteBlock, p.App, p.Window;`, (err, data) => {
             if (err) {
